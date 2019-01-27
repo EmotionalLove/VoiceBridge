@@ -11,7 +11,7 @@ public class BridgeAudio implements AudioSendHandler, AudioReceiveHandler {
     public static BridgeAudio sharedInstance;
 
     private double volume = 1.0;
-    private ConcurrentLinkedQueue<byte[]> bridgeQueueTx = new ConcurrentLinkedQueue<>();
+    private ConcurrentLinkedQueue<byte[]> voiceData = new ConcurrentLinkedQueue<>();
 
 
     public BridgeAudio() {
@@ -31,7 +31,7 @@ public class BridgeAudio implements AudioSendHandler, AudioReceiveHandler {
     @Override
     public void handleCombinedAudio(CombinedAudio combinedAudio) {
         byte[] datas = combinedAudio.getAudioData(volume);
-        bridgeQueueTx.add(datas);
+        voiceData.add(datas);
     }
 
     @Override
@@ -43,12 +43,12 @@ public class BridgeAudio implements AudioSendHandler, AudioReceiveHandler {
 
     @Override
     public boolean canProvide() {
-        return !bridgeQueueTx.isEmpty();
+        return !voiceData.isEmpty();
     }
 
     @Override
     public byte[] provide20MsAudio() {
-        return bridgeQueueTx.poll();
+        return voiceData.poll();
     }
 
     @Override
